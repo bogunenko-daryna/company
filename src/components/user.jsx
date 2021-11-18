@@ -16,7 +16,12 @@ const User = ({
       <td>{name}</td>
       <td>
         {qualities.map((item) => (
-          <Qualitie id={item._id} color={item.color} name={item.name} />
+          <Qualitie
+            key={item._id}
+            id={item._id}
+            color={item.color}
+            name={item.name}
+          />
         ))}
       </td>
       <td>{profession.name}</td>
@@ -25,8 +30,12 @@ const User = ({
       <td>
         <BookMark key={_id} />
       </td>
-      <td>
-        <button className={"btn btn-danger"} onClick={() => onDelete(_id)}>
+      <td key={_id}>
+        <button
+          key={_id}
+          className={"btn btn-danger"}
+          onClick={() => onDelete(_id)}
+        >
           Удалить
         </button>
       </td>

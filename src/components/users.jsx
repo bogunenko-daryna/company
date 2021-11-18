@@ -8,22 +8,22 @@ const Users = () => {
   const [users, setUsers] = useState(api.users.fetchAll());
   const handleDelete = (userId) =>
     setUsers(users.filter((user) => user._id !== userId));
-
+  const elementKey = users._id;
   const [currentPage, setCurrentPage] = useState(1);
   const count = users.length;
 
   const pageSize = 4;
-  const handlePageChange = (pageIndex) => {
+  const onPageChange = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
   const userCrop = paginate(users, currentPage, pageSize);
   return (
     <>
-      <SearchStatus length={users.length} />
+      <SearchStatus length={count} />
       {count > 0 && (
-        <table className="table">
+        <table key={elementKey} className="table">
           <thead>
-            <tr>
+            <tr key={elementKey}>
               <th scope="col">Имя</th>
               <th scope="col">Качества</th>
               <th scope="col">Профессия</th>
@@ -33,18 +33,24 @@ const Users = () => {
               <th />
             </tr>
           </thead>
-          <tbody>
+          <tbody key={elementKey}>
             {userCrop.map((user) => (
-              <User onDelete={handleDelete} id={user._id} {...user} />
+              <User
+                key={user._id}
+                onDelete={handleDelete}
+                id={user._id}
+                {...user}
+              />
             ))}
           </tbody>
         </table>
       )}
 
       <Pagination
+        key={elementKey}
         itemsCount={count}
         pageSize={pageSize}
-        onPageChange={handlePageChange}
+        onPageChange={onPageChange}
         currentPage={currentPage}
       />
     </>
