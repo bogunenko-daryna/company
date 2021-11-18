@@ -1,55 +1,53 @@
 import React, { useState } from "react";
 import api from "../api";
-
+import SearchStatus from "./searchStatus";
+import User from "./user";
+import Pagination from "./pagination";
+import { paginate } from "../utils/paginate";
 const Users = () => {
-  const [users, setUsers] = useState(api.users);
+  const [users, setUsers] = useState(api.users.fetchAll());
+  const handleDelete = (userId) =>
+    setUsers(users.filter((user) => user._id !== userId));
 
-  const handleDeleteElement = (id) => {
-    setUsers(api.users.fetchAll().filter((el) => el._id !== id));
-    console.log(id);
+  const [currentPage, setCurrentPage] = useState(1);
+  const count = users.length;
+
+  const pageSize = 4;
+  const handlePageChange = (pageIndex) => {
+    setCurrentPage(pageIndex);
   };
+  const userCrop = paginate(users, currentPage, pageSize);
   return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th scope="col">Имя</th>
-          <th scope="col">Качевства</th>
-          <th scope="col">Профессия</th>
-          <th scope="col">Встретился, раз</th>
-          <th scope="col">Оценка</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        {api.users.fetchAll().map((element) => {
-          return (
-            <tr key={element._id}>
-              <td>{element.name}</td>
-              <td>
-                {element.qualities.map((item) => (
-                  <span key={item._id} className={"badge m-1 bg-" + item.color}>
-                    {item.name}
-                  </span>
-                ))}
-              </td>
-              <td>{element.profession.name}</td>
-              <td>{element.completedMeetings}</td>
-              <td>{element.rate}</td>
-              <td>
-                <button
-                  onClick={() => {
-                    handleDeleteElement(element._id);
-                  }}
-                  className="badge bg-danger"
-                >
-                  DELETE
-                </button>
-              </td>
+    <>
+      <SearchStatus length={users.length} />
+      {count > 0 && (
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">Имя</th>
+              <th scope="col">Качества</th>
+              <th scope="col">Профессия</th>
+              <th scope="col">Встретился, раз</th>
+              <th scope="col">Оценка</th>
+              <th scope="col">Избранное</th>
+              <th />
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            {userCrop.map((user) => (
+              <User onDelete={handleDelete} id={user._id} {...user} />
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      <Pagination
+        itemsCount={count}
+        pageSize={pageSize}
+        onPageChange={handlePageChange}
+        currentPage={currentPage}
+      />
+    </>
   );
 };
 
